@@ -4,6 +4,7 @@ import os
 
 # Configurações específicas de produção
 DEBUG = False
+ALLOWED_HOSTS = ['sistema-almox.onrender.com']
 
 # Banco de dados para produção
 DATABASES = {
