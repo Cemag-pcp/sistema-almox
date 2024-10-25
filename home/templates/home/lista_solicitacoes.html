@@ -1,0 +1,219 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h3 class="mb-3">Requisições</h3>
+<table id="requisicoesTable" class="table table-bordered table-striped table-sm mb-3">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Funcionário</th>
+            <th>Item</th>
+            <th>Quantidade</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for requisicao in requisicoes %}
+        <tr>
+            <td>{{ requisicao.id }}</td>
+            <td>{{ requisicao.funcionario.matricula }} - {{ requisicao.funcionario.nome }}</td>
+            <td title="{{ requisicao.item }}">{{ requisicao.item|truncatechars:30 }}</td>
+            <td>{{ requisicao.quantidade }}</td>
+            <td>
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="solicitacao_id" value="{{ requisicao.id }}">
+                    <input type="hidden" name="tipo_solicitacao" value="requisicao">
+                    <button type="button" class="badge rounded-pill btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#entregaModal"
+                        data-solicitacao-id="{{ requisicao.id }}" data-tipo-solicitacao="requisicao">Entregar</button>
+                    <button class="badge rounded-pill btn btn-sm btn-danger" type="submit" name="apagar" onclick="return confirm('Tem certeza que deseja apagar esta solicitação?');">Apagar</button>
+                    <!-- <button class="badge rounded-pill btn btn-sm btn-warning" type="submit" name="editar">Editar</button> -->
+                    <a type="button" class="badge rounded-pill btn btn-sm btn-warning" href="{% url 'edit_solicitacao' 'requisicao' requisicao.id %}">Editar</a>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h3 class="mb-3">Transferências</h3>
+<table id="transferenciasTable" class="table table-bordered table-striped table-sm mb-3">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Funcionário</th>
+            <th>Item</th>
+            <th>Quantidade</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for transferencia in transferencias %}
+        <tr>
+            <td>{{ transferencia.id }}</td>
+            <td>{{ transferencia.funcionario.matricula }} - {{ transferencia.funcionario.nome }}</td>
+            <td title="{{ transferencia.item }}">{{ transferencia.item|truncatechars:30 }}</td>
+            <td>{{ transferencia.quantidade }}</td>
+            <td>
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="solicitacao_id" value="{{ transferencia.id }}">
+                    <input type="hidden" name="tipo_solicitacao" value="transferencia">
+                    <button type="button" class="badge rounded-pill btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#entregaModal"
+                        data-solicitacao-id="{{ transferencia.id }}" data-tipo-solicitacao="transferencia">Entregar</button>
+                    <button class="badge rounded-pill btn btn-sm btn-danger" type="submit" name="apagar" onclick="return confirm('Tem certeza que deseja apagar esta solicitação?');">Apagar</button>
+                    <a type="button" class="badge rounded-pill btn btn-sm btn-warning" href="{% url 'edit_solicitacao' 'transferencia' transferencia.id %}">Editar</a>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<!-- Modal -->
+<div class="modal fade" id="entregaModal" tabindex="-1" aria-labelledby="entregaModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="entregaModalLabel">Escolher Operador</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="solicitacao_id" id="solicitacaoId">
+            <input type="hidden" name="tipo_solicitacao" id="tipoSolicitacao">
+            <div class="mb-3">
+                <label for="operador" class="form-label">Operador</label>
+                <select class="form-select" name="matricula" id="operador" required>
+                {% for operador in operadores %}
+                <option value="{{ operador.matricula }}">{{ operador.matricula }} - {{ operador.nome }}</option>
+                {% endfor %}
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="data_entrega" class="form-label">Data de Entrega</label>
+                <div class="input-group">
+                    <input type="datetime-local" class="form-control" name="data_entrega" id="data_entrega" required>
+                    <button class="btn btn-outline-secondary" type="button" onclick="agoraDataEntrega()">Agora</button>
+                </div>
+            </div>
+            <div class="text-end">
+                <button type="submit" name="entregar" class="badge btn btn-sm btn-success">Confirmar Entrega</button>
+            </div>
+            </form>
+        </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Edição -->
+<div class="modal fade" id="editarModal" tabindex="-1" aria-labelledby="editarModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="editarModalLabel">Editar Solicitação</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <form id="editarForm" method="post" action="{% url 'processar_edicao' %}">
+                {% csrf_token %}
+                <input type="hidden" name="solicitacao_id" id="editarSolicitacaoId">
+                <input type="hidden" name="tipo_solicitacao" id="editarTipoSolicitacao">
+            
+                <div class="mb-3">
+                    <label for="funcionario" class="form-label">Funcionário</label>
+                    <input type="text" class="form-control" id="editarFuncionario" name="funcionario" readonly>
+                </div>
+                <div class="mb-3">
+                    <label for="item" class="form-label">Item</label>
+                    <input type="text" class="form-control" id="editarItem" name="item" required>
+                </div>
+                <div class="mb-3">
+                    <label for="quantidade" class="form-label">Quantidade</label>
+                    <input type="number" class="form-control" id="editarQuantidade" name="quantidade" required>
+                </div>
+                <div class="text-end">
+                    <button type="submit" class="badge btn btn-sm btn-success">Salvar Alterações</button>
+                </div>
+            </form>
+        </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+
+<script>
+    var editarModal = document.getElementById('editarModal');
+    editarModal.addEventListener('show.bs.modal', function (event) {
+
+        var button = event.relatedTarget;
+        var solicitacaoId = button.getAttribute('data-solicitacao-id');
+        var tipoSolicitacao = button.getAttribute('data-tipo-solicitacao');
+        var funcionario = button.getAttribute('data-funcionario');
+        var item = button.getAttribute('data-item');
+        var quantidade = button.getAttribute('data-quantidade');
+
+        // Atualiza os campos do formulário no modal
+        var solicitacaoIdInput = editarModal.querySelector('#editarSolicitacaoId');
+        var tipoSolicitacaoInput = editarModal.querySelector('#editarTipoSolicitacao');
+        var funcionarioInput = editarModal.querySelector('#editarFuncionario');
+        var itemInput = editarModal.querySelector('#editarItem');
+        var quantidadeInput = editarModal.querySelector('#editarQuantidade');
+
+        solicitacaoIdInput.value = solicitacaoId;
+        tipoSolicitacaoInput.value = tipoSolicitacao;
+        funcionarioInput.value = funcionario;
+        itemInput.value = item;
+        quantidadeInput.value = quantidade;
+
+    });
+</script>
+
+<script>
+    function agoraDataEntrega(){
+
+        // Data e hora atual por default
+        var now = new Date();
+        var day = ('0' + now.getDate()).slice(-2);
+        var month = ('0' + (now.getMonth() + 1)).slice(-2);
+        var hours = ('0' + now.getHours()).slice(-2);
+        var minutes = ('0' + now.getMinutes()).slice(-2);
+        
+        // Formata a data e hora no formato correto para datetime-local
+        var formattedDateTime = now.getFullYear() + '-' + month + '-' + day + 'T' + hours + ':' + minutes;
+
+        document.getElementById('data_entrega').value = formattedDateTime;
+    }
+</script>
+
+<script>
+    var entregaModal = document.getElementById('entregaModal');
+    entregaModal.addEventListener('show.bs.modal', function (event) {
+        var button = event.relatedTarget; // Botão que disparou o modal
+        var solicitacaoId = button.getAttribute('data-solicitacao-id'); // Extrai informações dos atributos data-*
+        var tipoSolicitacao = button.getAttribute('data-tipo-solicitacao');
+        
+        // Atualiza os campos do modal
+        var solicitacaoIdInput = entregaModal.querySelector('#solicitacaoId');
+        var tipoSolicitacaoInput = entregaModal.querySelector('#tipoSolicitacao');
+        
+        solicitacaoIdInput.value = solicitacaoId;
+        tipoSolicitacaoInput.value = tipoSolicitacao;
+    });
+</script>
+
+<script>
+    $(document).ready(function() {
+        $('#requisicoesTable').DataTable();  // Inicializa o DataTable para a tabela de requisições
+        $('#transferenciasTable').DataTable();  // Inicializa o DataTable para a tabela de transferências
+    });
+</script>
+
+{% endblock %}
+
+
+
