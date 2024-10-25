@@ -69,9 +69,9 @@
             <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
                 <div class="sb-sidenav-menu">
                     <div class="nav">
-                        <a class="nav-link" href="/home/solicitacoes">Home</a>
-                        <a class="nav-link" href="/home/dashboard">Dashboard</a>
-                        <a class="nav-link" href="/solicitacao/criar-solicitacoes">Solicitar</a>
+                        <a class="nav-link" href="{% url 'lista_solicitacoes' %}">Home</a>
+                        <a class="nav-link" href="{% url 'dashboard' %}">Dashboard</a>
+                        <a class="nav-link" href="{% url 'criar_solicitacoes' %}">Solicitar</a>
                     
                         <a class="nav-link collapsed" href="#" data-bs-toggle="collapse"
                             data-bs-target="#collapseHistorico" aria-expanded="false" aria-controls="collapseHistorico">
