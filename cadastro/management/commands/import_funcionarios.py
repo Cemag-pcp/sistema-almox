@@ -9,7 +9,7 @@ class Command(BaseCommand):
         with open('funcionarios.csv', 'r') as file:
             reader = csv.DictReader(file)
             for row in reader:
-                matricula = row['MATRÍCULA']
+                matricula = row['MATRICULA']
                 nome_funcionario = row['COLABORADOR']
                 cc_codes = row['cc'].split('-')
 

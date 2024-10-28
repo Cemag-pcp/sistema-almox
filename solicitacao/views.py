@@ -304,7 +304,6 @@ def gerir_solicitacoes(request):
         tipo_cadastro = request.POST.get("tipo_cadastro")
         solicitacao_id = request.POST.get('id')
         
-
         if "add" in request.POST:
             
             if tipo_cadastro == 'item':
