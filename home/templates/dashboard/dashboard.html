@@ -140,7 +140,7 @@
                 .catch(error => console.error('Erro ao atualizar os dados:', error));
         }
         // Atualiza a cada 5 segundos
-        setInterval(atualizarDados, 5000);
+        setInterval(atualizarDados, 60000);
     
         // Chama a função ao carregar a página para obter os dados iniciais
         document.addEventListener('DOMContentLoaded', atualizarDados);
