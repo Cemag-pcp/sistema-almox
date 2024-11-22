@@ -66,7 +66,7 @@ class FuncionarioAdmin(admin.ModelAdmin):
     search_fields = ['nome', 'matricula', 'cc__nome']
 
 class ItensSolicitacaoAdmin(admin.ModelAdmin):
-    search_fields = ['codigo', 'nome', 'classe_requisicao']
+    search_fields = ['codigo', 'nome', 'classe_requisicao__nome']
 
 class ItensTransferenciaAdmin(admin.ModelAdmin):
     search_fields = ['codigo', 'nome']
