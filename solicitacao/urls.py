@@ -22,6 +22,10 @@ urlpatterns = [
     path('cadastro-item/edit/<int:pk>/<str:tipo_cadastro>', views.edit_solicitacao_cadastro_item, name='edit_solicitacao_cadastro_item'),
     path('cadastro-item/edit/<int:pk>', views.edit_solicitacao_cadastro_matricula, name='edit_solicitacao_cadastro_matricula'),
 
-    path('editar/<str:tipo_solicitacao>/<int:requisicao_id>/', views.edit_solicitacao, name='edit_solicitacao')
+    path('editar/<str:tipo_solicitacao>/<int:requisicao_id>/', views.edit_solicitacao, name='edit_solicitacao'),
+
+    path('erros/', views.home_erros, name='home_erros'),
+    path('erros/data-transferencia/', views.data_erros_transferencia, name='data_erros_transferencia'),
+    path('erros/data-requisicao/', views.data_erros_requisicao, name='data_erros_requisicao')
 
 ]
