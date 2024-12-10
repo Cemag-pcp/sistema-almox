@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="mt-4 mb-3">
+    <h1 class="text-center">Tabela de Erros Transferência</h1>
+    <div class="table-responsive" id="table-transferencia-container" style="max-height: 400px; overflow-y: auto;">
+        <table class="table table-bordered table-hover table-striped">
+            <thead class="table-light">
+                <tr>
+                    <th>Chave</th>
+                    <th>Item</th>
+                    <th>Quantidade</th>
+                    <th>Data Solicitação</th>
+                    <th>Data Entrega</th>
+                    <th>Destino</th>
+                    <th>Solicitante</th>
+                    <th>Erro</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody id="table-body-transferencia">
+                <!-- Dados serão carregados aqui dinamicamente -->
+            </tbody>
+        </table>
+        <div id="spinner-transferencia" class="text-center py-2" style="display: none;">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Carregando...</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="mt-4 mb-3">
+    <h1 class="text-center">Tabela de Erros Requisição</h1>
+    <div class="table-responsive" id="table-requisicao-container" style="max-height: 400px; overflow-y: auto;">
+        <table class="table table-bordered table-hover table-striped">
+            <thead class="table-light">
+                <tr>
+                    <th>Chave</th>
+                    <th>Item</th>
+                    <th>Quantidade</th>
+                    <th>Data Solicitação</th>
+                    <th>Data Entrega</th>
+                    <th>Classe</th>
+                    <th>Solicitante</th>
+                    <th>CC</th>
+                    <th>Erro</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody id="table-body-requisicao">
+                <!-- Dados serão carregados aqui dinamicamente -->
+            </tbody>
+        </table>
+        <div id="spinner-requisicao" class="text-center py-2" style="display: none;">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Carregando...</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Edição -->
+<div class="modal fade" id="modalEditar" tabindex="-1" aria-labelledby="modalEditarLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalEditarLabel">Editar Item</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formEditar">
+                    <input type="hidden" id="editarChave">
+                    <input type="hidden" id="editarType">
+                    <div class="mb-3">
+                        <label for="editarQuantidade" class="form-label">Quantidade</label>
+                        <input type="number" class="form-control" id="editarQuantidade" required>
+                    </div>
+                    <div class="mb-3" id="editarClasseContainer">
+                        <label for="editarClasse" class="form-label">Classe</label>
+                        <input type="text" class="form-control" id="editarClasse">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="btnSalvarEditar">Salvar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Confirmação de Exclusão -->
+<div class="modal fade" id="modalConfirmar" tabindex="-1" aria-labelledby="modalConfirmarLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalConfirmarLabel">Confirmar Exclusão</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Tem certeza de que deseja excluir o item <strong id="confirmarChave"></strong>?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-danger" id="btnConfirmarExcluir">Excluir</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
+
+{% block scripts %}
+    <script src="{% static 'js/datatable-erros.js' %}"></script>
+{% endblock %}

@@ -48,8 +48,8 @@
                         onclick="prepararAdd(this, false);">Aprovar</button>
                     {% endif %}
 
-                    <input type="hidden" class="tipo-cadastro" name="tipo_cadastro" value="">
-                    <input type="hidden" class="id" name="id" value="">
+                    <input type="hidden" class="tipo-cadastro-item" name="tipo_cadastro">
+                    <input type="hidden" class="id-item" name="id">
                     <button class="badge rounded-pill btn btn-sm btn-danger" type="submit" name="apagar" data-tipo-cadastro="item" data-id="{{item.id}}" onclick="return prepararApagar(this, 'form-solicitacao-item');">Apagar</button>
                     <a href="{% url 'edit_solicitacao_cadastro_item' item.pk item.tipo_solicitacao %}" class="badge rounded-pill btn btn-sm btn-warning" type="button">Editar</a>
                 </form>
@@ -140,8 +140,8 @@
         var id = button.getAttribute('data-id');
 
         var form = document.getElementById(formId);
-        form.querySelector('.tipo-cadastro').value = tipoCadastro;
-        form.querySelector('.id').value = id;
+        form.querySelector('.tipo-cadastro-item').value = tipoCadastro;
+        form.querySelector('.id-item').value = id;
 
         // Exibe a confirmação e retorna true/false para continuar ou cancelar o envio
         return confirm('Tem certeza que deseja apagar esta solicitação?');

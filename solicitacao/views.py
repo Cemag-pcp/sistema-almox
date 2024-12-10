@@ -6,6 +6,7 @@ from django.core.paginator import Paginator
 from django.db import IntegrityError
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 from .forms import *
 from .models import *
@@ -580,3 +581,87 @@ def edit_solicitacao(request, tipo_solicitacao, requisicao_id):
 
             # Renderiza o template com o contexto definido
             return render(request, 'editar_solicitacao.html', context)
+
+def home_erros(request):
+
+    return render(request, 'erros.html')
+
+def data_erros_transferencia(request):
+
+    queryset = SolicitacaoTransferencia.objects.filter(
+        (Q(rpa__isnull=True) | ~Q(rpa="OK")) & Q(data_entrega__isnull=False)
+    )
+
+    itens_transferencia_erros=[]
+
+    for item in queryset:
+        itens_transferencia_erros.append({
+            'chave':item.pk,
+            'item':f"{item.item.codigo} - {item.item.nome}",
+            'qtd':item.quantidade,
+            'data_solicitacao':item.data_solicitacao,
+            'data_entrega':item.data_entrega,
+            'dep_destino':item.deposito_destino.nome,
+            'solicitante':item.funcionario.nome,
+            'erro':item.rpa
+        })
+
+    # Paginação
+    page = int(request.GET.get('start', 0)) // int(request.GET.get('length', 10)) + 1
+    limit = int(request.GET.get('length', 10))
+    paginator = Paginator(itens_transferencia_erros, limit)
+
+    try:
+        instrumentos_page = paginator.page(page)
+    except EmptyPage:
+        instrumentos_page = []
+
+    data = {
+        'draw': int(request.GET.get('draw', 1)),
+        'recordsTotal': paginator.count,
+        'recordsFiltered': paginator.count,
+        'data': list(instrumentos_page),
+    }
+
+    return JsonResponse(data)
+
+def data_erros_requisicao(request):
+
+    queryset = SolicitacaoRequisicao.objects.filter(
+        (Q(rpa__isnull=True) | ~Q(rpa="OK")) & Q(data_entrega__isnull=False)
+    )
+
+    itens_requisicao_erros=[]
+
+    for item in queryset:
+        itens_requisicao_erros.append({
+            'chave':item.pk,
+            'item':f"{item.item.codigo} - {item.item.nome}",
+            'qtd':item.quantidade,
+            'data_solicitacao':item.data_solicitacao,
+            'data_entrega':item.data_entrega,
+            'classe_req':item.classe_requisicao.nome,
+            'solicitante':item.funcionario.nome,
+            'cc':item.cc.nome,
+            'erro':item.rpa
+        })
+
+    # Paginação
+    page = int(request.GET.get('start', 0)) // int(request.GET.get('length', 10)) + 1
+    limit = int(request.GET.get('length', 10))
+    paginator = Paginator(itens_requisicao_erros, limit)
+
+    try:
+        instrumentos_page = paginator.page(page)
+    except EmptyPage:
+        instrumentos_page = []
+
+    data = {
+        'draw': int(request.GET.get('draw', 1)),
+        'recordsTotal': paginator.count,
+        'recordsFiltered': paginator.count,
+        'data': list(instrumentos_page),
+    }
+
+    return JsonResponse(data)
+
