@@ -89,7 +89,11 @@
                                 <a class="nav-link" href="{% url 'historico_transferencia' %}">Transferência</a>
                             </nav>
                         </div>
-
+                        <div class="collapse" id="collapseHistorico" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
+                            <nav class="sb-sidenav-menu-nested nav">
+                                <a class="nav-link" href="{% url 'home_erros' %}">Erros</a>
+                            </nav>
+                        </div>
                         <a class="nav-link collapsed" href="#" data-bs-toggle="collapse"
                             data-bs-target="#collapseGerCadastro" aria-expanded="false" aria-controls="collapseGerCadastro">
                             <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
