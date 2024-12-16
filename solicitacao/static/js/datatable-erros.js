@@ -268,7 +268,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 });
 
-
 // Função para obter o CSRF token (se você estiver usando Django)
 function getCSRFToken() {
     const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
