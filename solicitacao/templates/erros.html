@@ -1,12 +1,24 @@
 {% extends 'base.html' %}
 {% load static %}
 
+{% block links %}
+<style>
+    .modal {
+        overflow-y: auto;
+    }
+
+    body {
+        overflow-x: hidden; /* Evita que o conteúdo salte */
+    }
+</style>
+{% endblock %}
+
 {% block content %}
 
 <div class="mt-4 mb-3">
     <h1 class="text-center">Tabela de Erros Transferência</h1>
     <div class="table-responsive" id="table-transferencia-container" style="max-height: 400px; overflow-y: auto;">
-        <table class="table table-bordered table-hover table-striped">
+        <table class="table table-bordered table-hover table-striped" id="table-transferencia-erros">
             <thead class="table-light">
                 <tr>
                     <th>Chave</th>
@@ -35,7 +47,7 @@
 <div class="mt-4 mb-3">
     <h1 class="text-center">Tabela de Erros Requisição</h1>
     <div class="table-responsive" id="table-requisicao-container" style="max-height: 400px; overflow-y: auto;">
-        <table class="table table-bordered table-hover table-striped">
+        <table class="table table-bordered table-hover table-striped" id="table-requisicao-erros">
             <thead class="table-light">
                 <tr>
                     <th>Chave</th>
@@ -63,7 +75,7 @@
 </div>
 
 <!-- Modal de Edição -->
-<div class="modal fade" id="modalEditar" tabindex="-1" aria-labelledby="modalEditarLabel" aria-hidden="true">
+<div class="modal fade" id="modalEditar" aria-labelledby="modalEditarLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -72,40 +84,50 @@
             </div>
             <div class="modal-body">
                 <form id="formEditar">
-                    <input type="hidden" id="editarChave">
-                    <input type="hidden" id="editarType">
+                    <input type="hidden" name="editarChave" id="editarChave">
+                    <input type="hidden" name="editarType" id="editarType">
                     <div class="mb-3">
                         <label for="editarQuantidade" class="form-label">Quantidade</label>
-                        <input type="number" class="form-control" id="editarQuantidade" required>
+                        <input type="number" name="editarQuantidade" step="0.1" class="form-control" id="editarQuantidade" required>
+                    </div>
+                    <div id="recursos-container" class="mb-3">
+                        <!-- Campos de recurso dinâmicos aparecerão aqui -->
                     </div>
                     <div class="mb-3" id="editarClasseContainer">
                         <label for="editarClasse" class="form-label">Classe</label>
-                        <input type="text" class="form-control" id="editarClasse">
+                        <select class="form-control" name="editarClasse" id="editarClasse">
+                            <option value="3">Req p Produção</option>
+                            <option value="4">Req p Consumo</option>
+                        </select>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                 <button type="button" class="btn btn-primary" id="btnSalvarEditar">Salvar</button>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Modal de Confirmação de Exclusão -->
+<!-- Modal de Confirmação de ajuste manual -->
 <div class="modal fade" id="modalConfirmar" tabindex="-1" aria-labelledby="modalConfirmarLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="modalConfirmarLabel">Confirmar Exclusão</h5>
+                <h5 class="modal-title" id="modalConfirmarLabel">Confirmar ajuste manual</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <p>Tem certeza de que deseja excluir o item <strong id="confirmarChave"></strong>?</p>
+                <form id="formEditarManual">
+                    <p>Tem certeza de que deseja confirmar o ajuste manual do item <strong id="confirmarChave"></strong>?</p>
+                    
+                    <input type="hidden" name="manualChave" id="manualChave">
+                    <input type="hidden" name="manualTipo" id="manualTipo">
+                    
+                </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-danger" id="btnConfirmarExcluir">Excluir</button>
+                <button type="button" class="btn btn-danger" id="btnConfirmarManual">Confirmar</button>
             </div>
         </div>
     </div>

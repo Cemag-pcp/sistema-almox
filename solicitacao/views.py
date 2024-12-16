@@ -2,15 +2,17 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
-from django.core.paginator import Paginator
 from django.db import IntegrityError
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.db import transaction
 
 from .forms import *
 from .models import *
 from cadastro.models import Cc
+
+import json
 
 def criar_solicitacoes(request):
 
@@ -664,4 +666,125 @@ def data_erros_requisicao(request):
     }
 
     return JsonResponse(data)
+
+def get_data_solicitacao(request):
+
+    tipo_solicitacao = request.GET.get('type')
+    chave = int(request.GET.get('chave'))
+
+    if tipo_solicitacao == 'requisicao':
+        
+        editar_item=get_object_or_404(SolicitacaoRequisicao, pk=chave)
+        recurso_selecionado = {
+            'id': editar_item.item.pk,
+            'label': editar_item.item.codigo+" - "+editar_item.item.nome
+        }
+    
+        return JsonResponse({
+            'quantidade':editar_item.quantidade,
+            'classe':int(editar_item.classe_requisicao.pk),
+            'cc':editar_item.cc.nome,
+            'recurso_selecionado': recurso_selecionado
+        })
+    
+    else:
+        
+        editar_item=get_object_or_404(SolicitacaoTransferencia, pk=chave)
+        recurso_selecionado = {
+            'id': editar_item.item.pk,
+            'label': editar_item.item.codigo+" - "+editar_item.item.nome
+        }
+
+        return JsonResponse({
+            'quantidade':editar_item.quantidade,
+            'recurso_selecionado': recurso_selecionado
+        })
+    
+def get_recursos(request):
+    tipo_solicitacao = request.GET.get('type')
+
+    # Validações
+    if tipo_solicitacao not in ['requisicao', 'transferencia']:
+        return JsonResponse({'error': 'Tipo de solicitação inválido'}, status=400)
+
+    # Pega o termo de busca e parâmetros de paginação
+    search = request.GET.get('search', '')
+    page = int(request.GET.get('page', 1))
+    per_page = 10
+
+    # Define a query base e o mapeamento de resultados
+    if tipo_solicitacao == 'requisicao':
+        recursos = ItensSolicitacao.objects.filter(
+            Q(codigo__icontains=search) | Q(nome__icontains=search)
+        ).order_by('codigo')
+        format_result = lambda recurso: {'id': recurso.pk, 'label': recurso.codigo+" - "+recurso.nome}
+    else:
+        recursos = ItensTransferencia.objects.filter(
+            Q(codigo__icontains=search) | Q(nome__icontains=search)
+        ).order_by('codigo')
+        format_result = lambda recurso: {'id': recurso.pk, 'label': recurso.codigo+" - "+recurso.nome}
+
+    # Paginação
+    paginator = Paginator(recursos, per_page)
+    recursos_page = paginator.get_page(page)
+
+    return JsonResponse({
+        'results': [format_result(recurso) for recurso in recursos_page],
+        'next': recursos_page.has_next(),
+    })
+
+def receber_edicao(request):
+
+    if request.method == 'POST':
+
+        with transaction.atomic():
+
+            # Parseia os dados JSON recebidos
+            data = json.loads(request.body)
+            chave = data.get('editarChave')
+            quantidade = data.get('editarQuantidade')
+            classe = int(data.get('editarClasse'))
+            tipo = data.get('editarType')
+            recurso = int(data.get('recurso'))
+
+            if tipo == 'transferencia':
+                edicao_transferencia = SolicitacaoTransferencia.objects.get(pk=chave)
+                edicao_transferencia.quantidade = quantidade
+                edicao_transferencia.item = get_object_or_404(ItensTransferencia, pk=recurso)
+                edicao_transferencia.save()
+                return JsonResponse({'status': 'success', 'message': 'Dados salvos com sucesso!'})
+
+            else:
+                edicao_requisicao = SolicitacaoRequisicao.objects.get(pk=chave)
+                edicao_requisicao.quantidade = quantidade
+                edicao_requisicao.item = get_object_or_404(ItensSolicitacao, pk=recurso)
+                edicao_requisicao.classe_requisicao = get_object_or_404(ClasseRequisicao, pk=classe)
+                edicao_requisicao.save()
+                return JsonResponse({'status': 'success', 'message': 'Dados salvos com sucesso!'})
+
+    return JsonResponse({'status': 'error', 'message': 'Método não permitido'}, status=405)
+
+def receber_ajuste_manual(request):
+    
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        
+        chave = data.get('manualChave')
+        tipo = data.get('manualTipo')
+
+        with transaction.atomic():
+
+            if tipo == 'transferencia':
+                transferencia = SolicitacaoTransferencia.objects.get(pk=chave)
+                transferencia.rpa = 'OK'
+                transferencia.save()
+                return JsonResponse({'status': 'success', 'message': 'Dados salvos com sucesso!'})
+
+            else:
+                requisicao = SolicitacaoRequisicao.objects.get(pk=chave)
+                requisicao.rpa = 'OK'
+                requisicao.save()
+                return JsonResponse({'status': 'success', 'message': 'Dados salvos com sucesso!'})
+
+
 

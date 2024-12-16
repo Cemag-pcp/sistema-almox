@@ -26,6 +26,12 @@ urlpatterns = [
 
     path('erros/', views.home_erros, name='home_erros'),
     path('erros/data-transferencia/', views.data_erros_transferencia, name='data_erros_transferencia'),
-    path('erros/data-requisicao/', views.data_erros_requisicao, name='data_erros_requisicao')
+    path('erros/data-requisicao/', views.data_erros_requisicao, name='data_erros_requisicao'),
+
+    path('get-dados/', views.get_data_solicitacao, name='get_data_solicitacao'),
+    path('get-recursos/', views.get_recursos, name='get_recursos'),
+
+    path('receber-edicao/', views.receber_edicao, name='receber_edicao'),
+    path('receber-ajuste-manual/', views.receber_ajuste_manual, name='receber_edicao'),
 
 ]
