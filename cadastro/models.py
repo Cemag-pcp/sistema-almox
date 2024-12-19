@@ -13,7 +13,7 @@ class Cc(models.Model):
 class Funcionario(models.Model):
 
     nome = models.CharField(max_length=100)
-    matricula = models.CharField(max_length=5, unique=True)
+    matricula = models.CharField(max_length=6, unique=True)
     cc = models.ManyToManyField(Cc, related_name='funcionario_cc')
 
     def __str__(self):
