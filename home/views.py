@@ -12,6 +12,7 @@ from django.core.paginator import Paginator
 from solicitacao.models import SolicitacaoRequisicao, SolicitacaoTransferencia
 from solicitacao.forms import SolicitacaoRequisicaoForm, SolicitacaoTransferenciaForm
 from cadastro.models import Operador, Funcionario, ItensSolicitacao, ItensTransferencia
+from .models import Versao
 
 from datetime import datetime
 from conexao_plan import busca_saldo_recurso_central
@@ -306,7 +307,7 @@ class CustomLogoutView(LogoutView):
 
 @login_required    
 def page_solicitacoes(request):
-    return render(request, "home/lista_solicitacoes2.html")
+    return render(request, "home/lista_solicitacoes.html")
 
 def processarCodigos(requisicoes,transferencias):
 
@@ -326,3 +327,9 @@ def processarCodigos(requisicoes,transferencias):
         item.saldo = saldos.get(item.item.codigo, '0')
     
     return 'teste'
+
+def versao(request):
+    # Busca todas as versões ordenadas pela data mais recente
+    versoes = Versao.objects.order_by('data_lancamento')
+
+    return render(request, 'home/versao.html', {'versoes': versoes})
