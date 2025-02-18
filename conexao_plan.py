@@ -5,14 +5,11 @@ import os
 from cachetools import LRUCache
 # import environ
 # from google.oauth2.service_account import Credentials
-# from dotenv import load_dotenv
 
 cache = LRUCache(maxsize=100)
 
 def busca_saldo_recurso_central(codigos):
     #Recebe codigo do item nos parametros e retorna saldo de recurso ao vivo do almox central e a data de último saldo puxada da planilha
-
-    # load_dotenv()
 
     #Transformação em tupla para verificar o cache
     codigos_tupla = tuple(codigos)
