@@ -6,8 +6,9 @@
     <h3 class="">Requisições</h3>
     <a href="#">Entregar várias requisições</a>
 </div>
-<button id="botaoReload">botaoDestroy</button>
-<button id="botaoCreate">botaoCreate</button>
+
+<p id="data_saldo">Última verificação de saldo: </p>
+
 <table id="requisicoesTable" class="table table-bordered table-striped table-sm mb-3">
     <thead>
         <tr>
@@ -16,40 +17,14 @@
             <th>Item</th>
             <th>Quantidade</th>
             <th>Classe de Requisição</th>
-            <th>Saldo de recurso</th>
-            <th>Data da última verificação</th>
+            <th>Saldo de Recurso</th>
             <th>Ações</th>
         </tr>
     </thead>
     <tbody>
-        {% for requisicao in requisicoes %}
-        <tr>
-            <td>{{ requisicao.id }}</td>
-            <td>{{ requisicao.funcionario.matricula }} - {{ requisicao.funcionario.nome }}</td>
-            <td title="{{ requisicao.item }}">{{ requisicao.item|truncatechars:30 }}</td>
-            <td>{{ requisicao.quantidade }}</td>
-            <td>{{ requisicao.classe_requisicao }}</td>
-            <td>{{ requisicao.saldo }}</td>
-            <td>{{ data_ultimo_saldo}}</td>
-            <td>
-                <form method="post">
-                    {% csrf_token %}
-                    <input type="hidden" name="solicitacao_id" value="{{ requisicao.id }}" class="solicitacao_id">
-                    <input type="hidden" name="tipo_solicitacao" value="requisicao" class="tipo_solicitacao">
-                    <button type="button" class="badge rounded-pill btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#entregaModal"
-                        data-solicitacao-id="{{ requisicao.id }}" data-tipo-solicitacao="requisicao">Entregar</button>
-                    <button class="badge rounded-pill btn btn-sm btn-danger" type="button" data-tipo-solicitacao="requisicao" data-solicitacao-id="{{ requisicao.id }}" data-item="{{ requisicao.item }}" name="apagar" onclick="prepararApagar(this);">Apagar</button>
-                    <button class="badge rounded-pill btn btn-sm btn-warning" id="buttonEditRequisicao{{requisicao.id}}"type="button" data-tipo-solicitacao="requisicao" data-solicitacao-id="{{ requisicao.id }}" onclick="prepararEditar(this)">
-                        <span class="spinner-border spinner-border-sm spinnerRequisicao" role="status" aria-hidden="true" style="display: none;"></span>
-                        <span class="editRequisicaoText">Editar</span>
-                    </button>
-                </form>
-            </td>
-        </tr>
-        {% endfor %}
+        <!-- Dados serão carregados dinamicamente aqui -->
     </tbody>
 </table>
-
 
 <h3 class="mb-3">Transferências</h3>
 <table id="transferenciasTable" class="table table-bordered table-striped table-sm mb-3">
@@ -59,37 +34,12 @@
             <th>Funcionário</th>
             <th>Item</th>
             <th>Quantidade</th>
-            <th>Saldo de recurso</th>
-            <th>Data da última verificação</th>
+            <th>Saldo de Recurso</th>
             <th>Ações</th>
         </tr>
     </thead>
     <tbody>
-        {% for transferencia in transferencias %}
-        <tr>
-            <td>{{ transferencia.id }}</td>
-            <td>{{ transferencia.funcionario.matricula }} - {{ transferencia.funcionario.nome }}</td>
-            <td title="{{ transferencia.item }}">{{ transferencia.item|truncatechars:30 }}</td>
-            <td>{{ transferencia.quantidade }}</td>
-            <td>{{ transferencia.saldo }}</td>
-            <td>{{ data_ultimo_saldo}}</td>
-
-            <td>
-                <form method="post">
-                    {% csrf_token %}
-                    <input type="hidden" name="solicitacao_id" value="{{ transferencia.id }}" class="solicitacao_id">
-                    <input type="hidden" name="tipo_solicitacao" value="transferencia" class="tipo_solicitacao">
-                    <button type="button" class="badge rounded-pill btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#entregaModal"
-                        data-solicitacao-id="{{ transferencia.id }}" data-tipo-solicitacao="transferencia">Entregar</button>
-                    <button class="badge rounded-pill btn btn-sm btn-danger" type="button" data-tipo-solicitacao="transferencia" data-solicitacao-id="{{ transferencia.id }}" data-item="{{ transferencia.item }}" name="apagar" onclick="prepararApagar(this);">Apagar</button>
-                    <button class="badge rounded-pill btn btn-sm btn-warning" id="buttonEditTransferencia{{transferencia.id}}" type="button" data-tipo-solicitacao="transferencia" data-solicitacao-id="{{ transferencia.id }}" onclick="prepararEditar(this)">
-                        <span class="spinner-border spinner-border-sm spinnerTransferencia" role="status" aria-hidden="true" style="display: none;"></span>
-                        <span class="editTransferenciaText">Editar</span>
-                    </button>
-                </form>
-            </td>
-        </tr>
-        {% endfor %}
+        <!-- Dados serão carregados dinamicamente aqui -->
     </tbody>
 </table>
 
@@ -102,16 +52,16 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-            <form method="post">
+            <form id="formEntregaModal" method="post" action="{% url 'lista_solicitacoes' %}">
             {% csrf_token %}
             <input type="hidden" name="solicitacao_id" id="solicitacaoId">
             <input type="hidden" name="tipo_solicitacao" id="tipoSolicitacao">
+            <input type="hidden" name="entregar" id="entregar">
+
             <div class="mb-3">
                 <label for="operador" class="form-label">Operador</label>
                 <select class="form-select" name="matricula" id="operador" required>
-                {% for operador in operadores %}
-                <option value="{{ operador.matricula }}">{{ operador.matricula }} - {{ operador.nome }}</option>
-                {% endfor %}
+                
                 </select>
             </div>
             <div class="mb-3">
@@ -122,48 +72,13 @@
                 </div>
             </div>
             <div class="text-end">
-                <button type="submit" name="entregar" class="badge btn btn-sm btn-success">Confirmar Entrega</button>
+                <button type="submit" id="buttonEntregaModal" class="badge btn btn-sm btn-success">Confirmar Entrega</button>
             </div>
             </form>
         </div>
         </div>
     </div>
 </div>
-
-<!-- Modal de Edição -->
-<!-- <div class="modal fade" id="editarModal" tabindex="-1" aria-labelledby="editarModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-        <div class="modal-header">
-            <h5 class="modal-title" id="editarModalLabel">Editar Solicitação</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-            <form id="editarFormAntigo" method="post" action="{% url 'processar_edicao' %}">
-                {% csrf_token %}
-                <input type="hidden" name="solicitacao_id" id="editarSolicitacaoIdAntigo">
-                <input type="hidden" name="tipo_solicitacao" id="editarTipoSolicitacaoAntigo">
-            
-                <div class="mb-3">
-                    <label for="funcionario" class="form-label">Funcionário</label>
-                    <input type="text" class="form-control" id="editarFuncionarioAntigo" name="funcionario" readonly>
-                </div>
-                <div class="mb-3">
-                    <label for="item" class="form-label">Item</label>
-                    <input type="text" class="form-control" id="editarItemAntigo" name="item" required>
-                </div>
-                <div class="mb-3">
-                    <label for="quantidade" class="form-label">Quantidade</label>
-                    <input type="number" class="form-control" id="editarQuantidadeAntigo" name="quantidade" required>
-                </div>
-                <div class="text-end">
-                    <button type="submit" class="badge btn btn-sm btn-success">Salvar Alterações</button>
-                </div>
-            </form>
-        </div>
-        </div>
-    </div>
-</div> -->
 
 <!-- Modal de exclusão -->
 <div class="modal fade" id="confirmarExclusao" tabindex="-1" aria-labelledby="confirmarExclusaoLabel" aria-hidden="true">
@@ -174,7 +89,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="formConfirmacaoExclusao" method="POST">
+                <form id="formConfirmacaoExclusao" method="POST" action="{% url 'lista_solicitacoes' %}">
                     {% csrf_token %}
                     <div class="mb-3">
                         <div class="mb-3">
@@ -185,17 +100,11 @@
                     <input type="hidden" class="solicitacao_id" name="solicitacao_id">
                     <input type="hidden" name="apagar">
 
-                    
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button class="btn btn-primary" id="buttonApagar{{solicitacao_id}}" type="submit">
-                        <span class="spinner-border spinner-border-sm spinnerApagar" role="status" aria-hidden="true" style="display: none;"></span>
-                        <span class="apagarText">Confirmar</span>
-                    </button>
-                    <!-- <button type="submit" class="btn btn-primary">Confirmar</button> -->
                 </form>
             </div>
             <div class="modal-footer">
-                
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" onclick="confirmarExclusao(this)">Confirmar</button>
             </div>
         </div>
     </div>
@@ -210,7 +119,7 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-            <form id="editarFormRequisicao" method="post">
+            <form id="editarFormRequisicao" method="POST">
                 {% csrf_token %}
                 <div class="row mb-3 justify-content-center">
                     <div class="col-md-6">
@@ -246,9 +155,12 @@
                         <input type="number" class="form-control" id="quantidade" name="requisicao-quantidade" value="" step="0.01" required>
                     </div>
                 </div>
+
+                <input type="hidden" name="solicitacao_id" id="solicitacaoIdEditarReq">
+                <input type="hidden" name="tipo_solicitacao" id="tipoSolicitacaoEditarReq">
                 
                 <div class="text-end">
-                    <button type="submit" class="btn btn-success">Salvar Alterações</button>
+                    <button id="buttonSubmitEditarReq" type="submit" class="btn btn-success">Salvar Alterações</button>
                 </div>
             </form>
         </div>
@@ -293,10 +205,13 @@
                         <input type="number" class="form-control" id="quantidade_transferencia" name="transferencia-quantidade" step="0.01" required>
                     </div>
                 </div>
+
+                <input type="hidden" name="solicitacao_id" id="solicitacaoIdEditarTra">
+                <input type="hidden" name="tipo_solicitacao" id="tipoSolicitacaoEditarTra">
             
                 <div class="row justify-content-center">
                     <div class="col-md-12 text-end">
-                        <button type="submit" class="btn btn-success">Salvar Alterações</button>
+                        <button id="buttonSubmitEditarTra" type="submit" class="btn btn-success">Salvar Alterações</button>
                     </div>
                 </div>
             </form>
@@ -366,31 +281,62 @@
         
         solicitacaoIdInput.value = solicitacaoId;
         tipoSolicitacaoInput.value = tipoSolicitacao;
+
+        let selectOperador = document.getElementById("operador");
+        operadores.forEach(function(op){
+            let optionOp = document.createElement('option');
+
+            optionOp.value = op.matricula;
+            optionOp.textContent = `${op.matricula} - ${op.nome}`;
+
+            selectOperador.appendChild(optionOp);
+        })
+
+
+    });
+
+    $('#formEntregaModal').on('submit',function(event){
+        event.preventDefault();
+        let buttonEntregaModal = document.getElementById('buttonEntregaModal');
+        let formEntregaData = $(this).serialize();
+        
+        var url = `{% url "lista_solicitacoes" %}`; 
+
+        $.ajax({
+            url: url,  // A URL para onde os dados serão enviados
+            type: 'POST',
+            data: formEntregaData,  // Dados do formulário
+            beforeSend: function(){
+                buttonEntregaModal.textContent = 'Carregando...';
+                buttonEntregaModal.disabled = true;
+            },
+            success: function(response) {
+                // console.log("Dados enviados com sucesso",response);
+
+                var entregaConfirmaModal = bootstrap.Modal.getInstance(document.getElementById('entregaModal'));
+                entregaConfirmaModal.hide();
+
+                if (response.tipo == 'requisicao'){
+                    tableReq.ajax.reload();
+                }else{
+                    tableTra.ajax.reload();
+                }
+
+                // Aqui você pode exibir uma mensagem ou realizar outra ação com a resposta
+            },
+            error: function(xhr, status, error) {
+                console.error("Erro ao enviar dados:", error);
+            },
+            complete: function(xhr, status) {
+                buttonEntregaModal.textContent = 'Confirmar Entrega';
+                buttonEntregaModal.disabled = false;
+            }
+        });
+
     });
 </script>
 
-<script>
-    
-    $(document).ready(function() {
-        let tableReq = $('#requisicoesTable').DataTable();  // Inicializa o DataTable para a tabela de requisições
-        $('#transferenciasTable').DataTable();  // Inicializa o DataTable para a tabela de transferências
-
-        // $("#botaoReload").click(function() {
-        //     // $('#requisicoesTable').DataTable().ajax.reload();
-        //     tableReq.destroy();  // Inicializa o DataTable para a tabela de requisições
-        //     // Inicializa o DataTable para a tabela de requisições
-        // });
-        // $("#botaoCreate").click(function() {
-        //     // $('#requisicoesTable').DataTable().ajax.reload();
-        //     $('#requisicoesTable').DataTable();  // Inicializa o DataTable para a tabela de requisições
-        //     // Inicializa o DataTable para a tabela de requisições
-        // });
-    });
-
-</script>
-
-<script>
-    
+<script>   
 
     function prepararApagar(button) {
         // Pegando os dados do formulario
@@ -418,42 +364,44 @@
 
     }
 
-    function confirmarExclusao(){
+    function confirmarExclusao(button){
         // Submete o formulário com a escolha
-        document.getElementById("formConfirmacaoExclusao").submit();
+        var formExclusao = document.getElementById("formConfirmacaoExclusao");
+ 
+        var url = `{% url "lista_solicitacoes" %}`; 
+        var formData = $(formExclusao).serialize();
+        $.ajax({
+            url: url,  // A URL para onde os dados serão enviados
+            type: 'POST',
+            data: formData,  // Dados do formulário
+            beforeSend: function(){
+                button.textContent = 'Carregando...';
+                button.disabled = true;
+            },
+            success: function(response) {
+                console.log("Dados enviados com sucesso");
+                button.textContent = 'Confirmar';
+                button.disabled = false;
+                var confirmaModal = bootstrap.Modal.getInstance(document.getElementById('confirmarExclusao'));
+                confirmaModal.hide();
+
+                if (response.tipo == 'requisicao'){
+                    tableReq.ajax.reload();
+                }else{
+                    tableTra.ajax.reload();
+                }
+                
+
+
+                // Aqui você pode exibir uma mensagem ou realizar outra ação com a resposta
+            },
+            error: function(xhr, status, error) {
+                console.error("Erro ao enviar dados:", error);
+            }
+        });
 
     }
-    
-    // $('#formConfirmacaoExclusao').submit(function(e) {
-    //     e.preventDefault();  // Evita o envio tradicional do formulário
 
-    //     var formModal = document.getElementById("formConfirmacaoExclusao");
-    //     var tipoSolicitacao = formModal.querySelector('.tipo_solicitacao').value;
-    //     var solicitacaoId = formModal.querySelector('.solicitacao_id').value;
-    //     var botaoApagar = formModal.querySelector(`#buttonApagar${solicitacaoId}`);
-
-    //     var url = "{% url 'lista_solicitacoes' %}";
-    //     $.ajax({
-    //         url: url,  // URL para onde os dados serão enviados
-    //         type: 'POST',       // Tipo de requisição (POST)
-    //         data: $(this).serialize(), // Serializa os dados do formulário
-    //         beforeSend: function(){
-    //             botaoApagar.prop('disabled', true);
-    //             formModal.querySelector('.spinnerApagar').css('display','block');
-    //             formModal.querySelector('.apagarText').text('Confirmando...');
-                    
-    //         },
-    //         success: function(response) {
-    //             console.log('Dados enviados com sucesso:', response);
-    //             botaoApagar.prop('disabled', false);
-    //             formModal.querySelector('.spinnerApagar').css('display','none');
-    //             formModal.querySelector('.apagarText').text('Confimar');
-    //         },
-    //         error: function(xhr, status, error) {
-    //             console.error('Erro ao enviar dados:', error);
-    //         }
-    //     });
-    // });
 
     let id_solicitacao;
     function prepararEditar(button){
@@ -545,12 +493,12 @@
                 }
                 
                 
+                
                 if (isRequisicao){
                     var editarRequisicaoModal = new bootstrap.Modal(document.getElementById('confirmaEditarRequisicaoModal'));
                     editarRequisicaoModal.show();
                     var editarRequisicaoForm = document.getElementById('editarFormRequisicao');
                     editarRequisicaoForm.action = url;
-
 
                     spinnerRequisicao.style.display = 'none';
                     botaoEditarTextRequisicao.textContent = "Editar";
@@ -706,40 +654,202 @@
             // searchResultLimit: 5,
             noResultsText: 'Sem resultados'
         });
-
-        // function loadOptions(query) {
-        //     const url = `https://api.exemplo.com/itens?q=${query}`;  // Substitua pela sua URL de API
-            
-        //     fetch(url)
-        //         .then(response => response.json())
-        //         .then(data => {
-        //             // Adiciona as opções carregadas dinamicamente
-        //             data.items.forEach(item => {
-        //                 choices.setChoices([{
-        //                     value: item.id,
-        //                     label: item.nome
-        //                 }], 'value', 'label', false);
-        //             });
-        //         })
-        //         .catch(error => console.error('Erro ao carregar as opções:', error));
-        // }
-
-        // // Evento de pesquisa para carregar as opções
-        // selectElement.addEventListener('search', function(event) {
-        //     const query = event.target.value;
-        //     loadOptions(query);
-        // });
-        // let items = [];  // Aqui você pode colocar os dados iniciais (ex: de uma API ou array)
-        
-        // // Configuração do Choices.js
-        // const selectElement = document.getElementById('itens');
         
     });
 
 
+    $('#editarFormRequisicao').on('submit',function(event){
+        event.preventDefault();
+
+        let formEditReqData = $(this).serialize();
+        const buttonSubmitEditReq = document.getElementById('buttonSubmitEditarReq');
+
+        var urlAction = $(this).attr("action");
+        
+        
+        $.ajax({
+            url: urlAction,  // A URL para onde os dados serão enviados
+            type: 'POST',
+            data: formEditReqData,  // Dados do formulário
+            beforeSend: function(){
+                buttonSubmitEditReq.textContent = 'Carregando...';
+                buttonSubmitEditReq.disabled = true;
+            },
+            success: function(response) {
+                console.log("Dados enviados com sucesso",response);
+
+                var confirmaEditarReqModal = bootstrap.Modal.getInstance(document.getElementById('confirmaEditarRequisicaoModal'));
+                confirmaEditarReqModal.hide();
+
+                if (response.tipo == 'requisicao'){
+                    tableReq.ajax.reload();
+                }else{
+                    tableTra.ajax.reload();
+                }
+
+                // Aqui você pode exibir uma mensagem ou realizar outra ação com a resposta
+            },
+            error: function(xhr, status, error) {
+                console.error("Erro ao enviar dados:", error);
+            },
+            complete: function(xhr, status) {
+                buttonSubmitEditReq.textContent = 'Salvar Alterações';
+                buttonSubmitEditReq.disabled = false;
+            }
+        });
+    });
+
+    $('#editarFormTransferencia').on('submit',function(event){
+        event.preventDefault();
+
+        let formEditTraData = $(this).serialize();
+        const buttonSubmitEditTra = document.getElementById('buttonSubmitEditarTra');
+
+        var urlAction = $(this).attr("action");
+        
+        
+        $.ajax({
+            url: urlAction,  // A URL para onde os dados serão enviados
+            type: 'POST',
+            data: formEditTraData,  // Dados do formulário
+            beforeSend: function(){
+                buttonSubmitEditTra.textContent = 'Carregando...';
+                buttonSubmitEditTra.disabled = true;
+            },
+            success: function(response) {
+                console.log("Dados enviados com sucesso",response);
+
+                var confirmaEditarTraModal = bootstrap.Modal.getInstance(document.getElementById('confirmaEditarTransferenciaModal'));
+                confirmaEditarTraModal.hide();
+
+                if (response.tipo == 'requisicao'){
+                    tableReq.ajax.reload();
+                }else{
+                    tableTra.ajax.reload();
+                }
+
+                // Aqui você pode exibir uma mensagem ou realizar outra ação com a resposta
+            },
+            error: function(xhr, status, error) {
+                console.error("Erro ao enviar dados:", error);
+            },
+            complete: function(xhr, status) {
+                buttonSubmitEditTra.textContent = 'Salvar Alterações';
+                buttonSubmitEditTra.disabled = false;
+            }
+        });
+    });
 </script>
 
 
+<script>
+    var operadores;
+    let tableReq;
+    let tableTra;
+    $(document).ready(function (){
+        let data_saldo;
+
+        let url = `{% url "lista_solicitacoes" %}`;
+        tableReq = $('#requisicoesTable').DataTable({
+            width: "100%",   // Define a largura total para o DataTable
+            lengthMenu: [5, 10, 25, 50],  // Opções de número de registros por página
+            pageLength: 10,  // Define que a página inicial mostrará 10 registros
+            serverSide: true,
+            processing: true,
+            order: [[0, 'asc']],
+            ajax: {
+                url: url,
+                type: 'POST',
+                data: function(d) {
+                    // Passa parâmetros personalizados para o servidor
+                    d.type_sol = 'requisicao';
+                    d.csrfmiddlewaretoken = '{{ csrf_token }}';  // Inclui o token CSRF
+                },
+                dataSrc: function (json) {
+                    data_saldo = json.data_ultimo_saldo;
+                    operadores = json.operadores;
+                    return json.requisicoes;  // Retorna apenas a parte de "requisicoes" do JSON
+                }
+            },
+            columns:[
+                { data: 'id' },
+                { data: 'funcionario'},
+                { data: 'item'},
+                { data: 'quantidade'},
+                { data: 'classe_requisicao'},
+                { data: 'saldo'},
+                { 
+                    data: 'acoes',
+                    render: function(data,type,row){
+                        return `<input type="hidden" name="solicitacao_id" value="${row.id}" class="solicitacao_id">
+                                <input type="hidden" name="tipo_solicitacao" value="requisicao" class="tipo_solicitacao">
+                                <button type="button" class="badge rounded-pill btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#entregaModal"
+                                    data-solicitacao-id="${row.id}" data-tipo-solicitacao="requisicao">Entregar</button>
+                                <button class="badge rounded-pill btn btn-sm btn-danger" type="button" data-tipo-solicitacao="requisicao" data-solicitacao-id="${row.id}" data-item="${row.item}" name="apagar" onclick="prepararApagar(this);">Apagar</button>
+                                <button class="badge rounded-pill btn btn-sm btn-warning" id="buttonEditRequisicao${row.id}"type="button" data-tipo-solicitacao="requisicao" data-solicitacao-id="${row.id}" onclick="prepararEditar(this)">
+                                    <span class="spinner-border spinner-border-sm spinnerRequisicao" role="status" aria-hidden="true" style="display: none;"></span>
+                                    <span class="editRequisicaoText">Editar</span>
+                                </button>`;
+                    }
+                }
+                ]
+            }
+        
+        );
+        tableTra = $('#transferenciasTable').DataTable({
+            width: "100%",   // Define a largura total para o DataTable
+            lengthMenu: [5, 10, 25, 50],  // Opções de número de registros por página
+            pageLength: 10,  // Define que a página inicial mostrará 10 registros
+            serverSide: true,
+            processing: true,
+            order: [[0, 'asc']],
+            ajax: {
+                url: url,
+                type: 'POST',
+                data: function(d) {
+                    // Passa parâmetros personalizados para o servidor
+                    d.type_sol = 'transferencia';
+                    d.csrfmiddlewaretoken = '{{ csrf_token }}';  // Inclui o token CSRF
+                },
+                dataSrc: function (json) {
+                    // Aqui é onde você manipula os dados retornados para o DataTable
+                    data_saldo = json.data_ultimo_saldo;
+                    operadores = json.operadores;
+                    return json.transferencias;  // Retorna apenas a parte de "requisicoes" do JSON
+                }
+            },
+            columns:[
+                { data: 'id' },
+                { data: 'funcionario'},
+                { data: 'item'},
+                { data: 'quantidade'},
+                { data: 'saldo'},
+                { 
+                    data:'acoes',
+                    render: function(data,type,row){
+                        return `<input type="hidden" name="solicitacao_id" value="${row.id}" class="solicitacao_id">
+                                <input type="hidden" name="tipo_solicitacao" value="transferencia" class="tipo_solicitacao">
+                                <button type="button" class="badge rounded-pill btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#entregaModal"
+                                    data-solicitacao-id="${row.id}" data-tipo-solicitacao="transferencia">Entregar</button>
+                                <button class="badge rounded-pill btn btn-sm btn-danger" type="button" data-tipo-solicitacao="transferencia" data-solicitacao-id="${row.id}" data-item="${row.item}" name="apagar" onclick="prepararApagar(this);">Apagar</button>
+                                <button class="badge rounded-pill btn btn-sm btn-warning" id="buttonEditTransferencia${row.id}" type="button" data-tipo-solicitacao="transferencia" data-solicitacao-id="${row.id}" onclick="prepararEditar(this)">
+                                    <span class="spinner-border spinner-border-sm spinnerTransferencia" role="status" aria-hidden="true" style="display: none;"></span>
+                                    <span class="editTransferenciaText">Editar</span>
+                                </button>`
+                    }
+                }
+                    ]   
+            }
+        
+        );
+        tableReq.on('draw', function() {
+        // Aqui você pode carregar ou executar algo após o carregamento do DataTable
+            $('#data_saldo').text("Última verificação de saldo: "+data_saldo);
+        });
+
+
+    })
+</script>
 {% endblock %}
 
 

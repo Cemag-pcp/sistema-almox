@@ -35,7 +35,7 @@
                     
                     <div class="row mb-3 justify-content-center">
                         <div class="col-md-6">
-                            <label for="id_requisicao-funcionario" class="form-label">Matrícula:</label>
+                            <label for="id_requisicao-funcionario" class="form-label">Matrícula: (Caso seja operador, a requisição será entregue automaticamente)</label>
                             <select id="id_requisicao-funcionario" class="form-select js-example-basic-single" name="requisicao-funcionario" required>
                                 <option value="">Selecione...</option>
                                 {% for funcionario in funcionarios %}
@@ -118,7 +118,7 @@
                 
                     <div class="row mb-3 justify-content-center">
                         <div class="col-md-6">
-                            <label for="id_transferencia-funcionario" class="form-label">Matrícula:</label>
+                            <label for="id_transferencia-funcionario" class="form-label">Matrícula: (Caso seja operador, a transferência será entregue automaticamente)</label>
                             <select id="id_transferencia-funcionario" class="form-select js-example-basic-single" name="transferencia-funcionario" required>
                                 <option value="">Selecione...</option>
                                 {% for funcionario in funcionarios %}
@@ -283,6 +283,26 @@
         </div>
     </div>
 </div>
+
+
+<div id="notificacaoSucesso" class="toast align-items-center text-white bg-success border-0 position-fixed bottom-0 end-0 p-3" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="true" data-bs-delay="3000">
+    <div class="d-flex">
+        <div class="toast-body">
+            Solicitação enviada com sucesso!
+        </div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+</div>
+
+<div id="notificacaoErro" class="toast align-items-center text-white bg-danger border-0 position-fixed bottom-0 end-0 p-3" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="true" data-bs-delay="3000">
+    <div class="d-flex">
+        <div class="toast-body">
+            Erro na solicitação. Tente novamente!
+        </div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+</div>
+
 
 <!-- Rádio para navegar entre os forms -->
 
@@ -557,6 +577,113 @@
         formCadastroMatricula.addEventListener('submit', handleFormSubmit);
     }
 
+</script>
+
+<script>
+    $('#formRequisicao').on('submit', function(event) {
+        event.preventDefault();
+
+        const formData = new FormData(this);
+
+            fetch('', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok){
+                    throw new Error('Erro na resposta');
+                }
+                
+                return response.json();
+            })
+            .then(data => {
+                var notificacaoRequisicao = document.getElementById('notificacaoSucesso')
+                var toastSucesso = new bootstrap.Toast(notificacaoRequisicao);
+
+                if (data.operador == true){
+                    notificacaoRequisicao.textContent = "Solicitação enviada e entregue por Operador!";
+                }else{
+                    notificacaoRequisicao.textContent = "Solicitação enviada com sucesso!";
+                }
+                
+                toastSucesso.show();
+            })
+            .catch(error => {
+                console.error('Erro ao enviar o formulário:', error);
+                var toastErro = new bootstrap.Toast(document.getElementById('notificacaoErro'));
+                toastErro.show();
+            })
+            .finally(() => {
+                const submitButton = event.target.querySelector('.submit-button');
+                submitButton.disabled = false;
+
+                const spinner = submitButton.querySelector('.spinner-border');
+                const buttonText = submitButton.querySelector('.button-text');
+
+                spinner.classList.add('d-none');
+                buttonText.textContent = "Enviar";
+
+                $('#id_requisicao-item').val('').trigger('change');
+                $('#id_requisicao-classe_requisicao').val('').trigger('change');
+                $('#id_requisicao-quantidade').val('');
+                $('#id_requisicao-obs').val('');
+                
+                
+            });
+    });
+
+
+    $('#formTransferencia').on('submit', function(event) {
+        event.preventDefault();
+
+        const formData = new FormData(this);
+
+            fetch('', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok){
+                    throw new Error('Erro na resposta');
+                }
+                
+                return response.json();
+                
+            })
+            .then(data => {
+                console.log('Resposta do servidor:', data.status);
+                var notificacaoTransferencia = document.getElementById('notificacaoSucesso');
+                var toastSucesso = new bootstrap.Toast(notificacaoTransferencia);
+
+                if (data.operador == true){
+                    notificacaoTransferencia.textContent = "Solicitação enviada e entregue por Operador!";
+                }else{
+                    notificacaoTransferencia.textContent = "Solicitação enviada com sucesso!";
+                }
+                toastSucesso.show();
+            })
+            .catch(error => {
+                console.error('Erro ao enviar o formulário:', error);
+                var toastErro = new bootstrap.Toast(document.getElementById('notificacaoErro'));
+                toastErro.show();
+            })
+            .finally(() => {
+                const submitButton = event.target.querySelector('.submit-button');
+                submitButton.disabled = false;
+
+                const spinner = submitButton.querySelector('.spinner-border');
+                const buttonText = submitButton.querySelector('.button-text');
+
+                spinner.classList.add('d-none');
+                buttonText.textContent = "Enviar";
+
+                $('#id_transferencia-item').val('').trigger('change');
+                $('#id_transferencia-quantidade').val('');
+                $('#id_transferencia-obs').val('');
+                
+                
+            });
+    });
 </script>
 
 {% endblock %}

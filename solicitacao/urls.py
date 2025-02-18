@@ -34,4 +34,10 @@ urlpatterns = [
     path('receber-edicao/', views.receber_edicao, name='receber_edicao'),
     path('receber-ajuste-manual/', views.receber_ajuste_manual, name='receber_edicao'),
 
+
+    # teste
+    path('receber-form-edit/', views.receberFormEdit, name='receberFormEdit'),
+
 ]
+
+

@@ -27,6 +27,12 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
 
+        <!-- CSS do Choices.js -->
+    <link href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" rel="stylesheet" />
+
+    <!-- JS do Choices.js -->
+    <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+
 
     {% block links %}
     {% endblock %}
@@ -72,7 +78,7 @@
             <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
                 <div class="sb-sidenav-menu">
                     <div class="nav">
-                        <a class="nav-link" href="{% url 'lista_solicitacoes' %}">Home</a>
+                        <a class="nav-link" href="{% url 'solicitacoes_page' %}">Home</a>
                         <a class="nav-link" href="{% url 'dashboard' %}">Dashboard</a>
                         <a class="nav-link" href="{% url 'criar_solicitacoes' %}">Solicitar</a>
                     
