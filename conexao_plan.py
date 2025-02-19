@@ -56,15 +56,16 @@ def busca_saldo_recurso_central(codigos):
     itens = pd.DataFrame(list1)
     itens.columns = itens.iloc[0]
     itens = itens.drop(index=0)
+    data_ultimo_saldo = itens.loc[itens.index[0],'data ultimo saldo']
 
     #filtrando pelo codigo
     itens = itens[itens['codigo'].isin(codigos)]
     if itens.empty:
-        cache[codigos_tupla] = 'Produtos não encontrados','n/a'
-        return 'Produtos não encontrados','n/a'
+        cache[codigos_tupla] = dict(),data_ultimo_saldo
+        return dict(),data_ultimo_saldo
     else:
         saldo_dict = dict(zip(itens['codigo'], itens['Saldo']))
-        data_ultimo_saldo = itens.loc[itens.index[0],'data ultimo saldo']
+        # data_ultimo_saldo = itens.loc[itens.index[0],'data ultimo saldo']
         cache[codigos_tupla] = saldo_dict,data_ultimo_saldo
         return saldo_dict,data_ultimo_saldo
  
