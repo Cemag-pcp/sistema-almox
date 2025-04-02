@@ -219,7 +219,6 @@ document.addEventListener('DOMContentLoaded', () => {
             alert('Ocorreu um erro ao salvar os dados.');
         });
     });
-
     // Enviar form de confirmação de ajuste manual
     document.getElementById('btnConfirmarManual').addEventListener('click', function () {
         // Captura os dados do formulário
@@ -252,7 +251,7 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log('Dados enviados com sucesso:', result);
     
             // Fecha o modal e atualiza a tabela, se necessário
-            const modal = bootstrap.Modal.getInstance(document.getElementById('modalEditar'));
+            const modal = bootstrap.Modal.getInstance(document.getElementById('modalConfirmar'));
             modal.hide();
 
             resetTable(transferenciaConfig); // Para tabela de transferências
