@@ -193,8 +193,10 @@ def lista_solicitacoes(request):
 
 @login_required
 def dashboard(request):
-    requisicoes = SolicitacaoRequisicao.objects.filter(entregue_por=None)
-    transferencias = SolicitacaoTransferencia.objects.filter(entregue_por=None)
+    requisicoes = SolicitacaoRequisicao.objects.filter(entregue_por=None).order_by('-data_solicitacao')
+    transferencias = SolicitacaoTransferencia.objects.filter(entregue_por=None).order_by('-data_solicitacao')
+
+    print(requisicoes)
 
     # data_requisicao_list = [req.pk,req.data_solicitacao for req in requisicoes]
     # data_transferencia_list = [tra.data_solicitacao for tra in transferencias]
@@ -214,8 +216,8 @@ def dashboard(request):
 
 @login_required
 def atualizar_dados(request):
-    requisicoes = SolicitacaoRequisicao.objects.filter(entregue_por=None)
-    transferencias = SolicitacaoTransferencia.objects.filter(entregue_por=None)
+    requisicoes = SolicitacaoRequisicao.objects.filter(entregue_por=None).order_by('-data_solicitacao')
+    transferencias = SolicitacaoTransferencia.objects.filter(entregue_por=None).order_by('-data_solicitacao')
 
     # Crie uma lista personalizada para requisições
     requisicoes_data = [
