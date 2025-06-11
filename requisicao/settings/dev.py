@@ -21,7 +21,9 @@ DATABASES = {
         'HOST': env('DB_HOST'),
         'PORT': env('DB_PORT'),
         'OPTIONS': {
-            'options': f'-c search_path={env('SCHEMA')}',
+            'options': '-c search_path=almoxarifado_v2_testes',
+            # 'options': '-c search_path=almoxarifado_v2_testes',
+            
         },
     }
 }

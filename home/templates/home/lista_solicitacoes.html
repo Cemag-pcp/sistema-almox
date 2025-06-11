@@ -271,6 +271,8 @@
 <script>
     var entregaModal = document.getElementById('entregaModal');
     entregaModal.addEventListener('show.bs.modal', function (event) {
+        let selectOperador = document.getElementById("operador");
+        selectOperador.innerHTML = "";
         var button = event.relatedTarget; // Botão que disparou o modal
         var solicitacaoId = button.getAttribute('data-solicitacao-id'); // Extrai informações dos atributos data-*
         var tipoSolicitacao = button.getAttribute('data-tipo-solicitacao');
@@ -282,7 +284,7 @@
         solicitacaoIdInput.value = solicitacaoId;
         tipoSolicitacaoInput.value = tipoSolicitacao;
 
-        let selectOperador = document.getElementById("operador");
+        
         operadores.forEach(function(op){
             let optionOp = document.createElement('option');
 

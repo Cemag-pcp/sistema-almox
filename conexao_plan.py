@@ -6,14 +6,11 @@ from cachetools import LRUCache
 # import environ
 # import environ
 # from google.oauth2.service_account import Credentials
-from dotenv import load_dotenv
 
 cache = LRUCache(maxsize=100)
 
 def busca_saldo_recurso_central(codigos):
     #Recebe codigo do item nos parametros e retorna saldo de recurso ao vivo do almox central e a data de último saldo puxada da planilha
-
-    # load_dotenv()
 
     #Transformação em tupla para verificar o cache
     codigos_tupla = tuple(codigos)
@@ -60,15 +57,16 @@ def busca_saldo_recurso_central(codigos):
     itens = pd.DataFrame(list1)
     itens.columns = itens.iloc[0]
     itens = itens.drop(index=0)
+    data_ultimo_saldo = itens.loc[itens.index[0],'data ultimo saldo']
 
     #filtrando pelo codigo
     itens = itens[itens['codigo'].isin(codigos)]
     if itens.empty:
-        cache[codigos_tupla] = 'Produtos não encontrados','n/a'
-        return 'Produtos não encontrados','n/a'
+        cache[codigos_tupla] = dict(),data_ultimo_saldo
+        return dict(),data_ultimo_saldo
     else:
         saldo_dict = dict(zip(itens['codigo'], itens['Saldo']))
-        data_ultimo_saldo = itens.loc[itens.index[0],'data ultimo saldo']
+        # data_ultimo_saldo = itens.loc[itens.index[0],'data ultimo saldo']
         cache[codigos_tupla] = saldo_dict,data_ultimo_saldo
         return saldo_dict,data_ultimo_saldo
  
