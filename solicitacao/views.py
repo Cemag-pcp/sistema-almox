@@ -73,7 +73,8 @@ def criar_solicitacoes(request):
                 #Verificar se o funcionario é um operador pela matricula
                 matricula = solicitacao.funcionario.matricula
                 try:
-                    operador = get_object_or_404(Operador, matricula=matricula)
+                    # Procurando o operador pelo número de matrícula e verificando se está ativo
+                    operador = get_object_or_404(Operador, matricula=matricula, status=True)
                     # Obtém a data e hora atual
                     now = datetime.now()
                     # Formata a data no formato desejado: YYYY-MM-DDTHH:MM
