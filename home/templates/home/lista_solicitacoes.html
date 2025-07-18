@@ -7,9 +7,20 @@
     <!-- <a href="#">Entregar várias requisições</a> -->
 </div>
 
-<p id="data_saldo">Última verificação de saldo: </p>
 
-<table id="requisicoesTable" class="table table-bordered table-striped table-sm mb-3">
+
+
+<div class="mt-3 d-flex flex-column">
+    <span id="data_saldo" class='mb-3'>Última verificação de saldo: </span>
+    
+    <div class="d-flex align-items-center mt-1 mb-3">
+        <strong class="me-3">Legenda:</strong>
+        <div class="linha-sem-saldo" style="width: 20px; height: 20px; border: 1px solid #ccc; margin-right: 8px;"></div>
+        <span>Saldo zerado</span>
+    </div>
+</div>
+
+<table id="requisicoesTable" class="table table-bordered table-striped table-sm mb-3" style="width:100%">
     <thead>
         <tr>
             <th>ID</th>
@@ -17,7 +28,8 @@
             <th>Item</th>
             <th>Quantidade</th>
             <th>Classe de Requisição</th>
-            <th>Saldo de Recurso</th>
+            <th>Saldo</th>
+            <th>Data de Solicitação</th>
             <th>Ações</th>
         </tr>
     </thead>
@@ -27,14 +39,15 @@
 </table>
 
 <h3 class="mb-3">Transferências</h3>
-<table id="transferenciasTable" class="table table-bordered table-striped table-sm mb-3">
+<table id="transferenciasTable" class="table table-bordered table-striped table-sm mb-3" style="width:100%">
     <thead>
         <tr>
             <th>ID</th>
             <th>Funcionário</th>
             <th>Item</th>
             <th>Quantidade</th>
-            <th>Saldo de Recurso</th>
+            <th>Saldo</th>
+            <th>Data de Solicitação</th>
             <th>Ações</th>
         </tr>
     </thead>
@@ -753,6 +766,7 @@
 
         let url = `{% url "lista_solicitacoes" %}`;
         tableReq = $('#requisicoesTable').DataTable({
+            responsive: true,
             width: "100%",   // Define a largura total para o DataTable
             lengthMenu: [5, 10, 25, 50],  // Opções de número de registros por página
             pageLength: 10,  // Define que a página inicial mostrará 10 registros
@@ -780,6 +794,15 @@
                 { data: 'quantidade'},
                 { data: 'classe_requisicao'},
                 { data: 'saldo'},
+                { data: 'data_solicitacao', 
+                  render: function(data, type, row) {
+                    return new Date(data).toLocaleDateString('pt-BR', {
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit',
+                    });
+                }
+                },
                 { 
                     data: 'acoes',
                     render: function(data,type,row){
@@ -794,11 +817,17 @@
                                 </button>`;
                     }
                 }
-                ]
+                ],
+            rowCallback: function(row, data, index) {
+                if (data.saldo <= 0) {
+                    $(row).addClass('linha-sem-saldo');
+                }
+            }
             }
         
         );
         tableTra = $('#transferenciasTable').DataTable({
+            responsive: true,
             width: "100%",   // Define a largura total para o DataTable
             lengthMenu: [5, 10, 25, 50],  // Opções de número de registros por página
             pageLength: 10,  // Define que a página inicial mostrará 10 registros
@@ -826,6 +855,15 @@
                 { data: 'item'},
                 { data: 'quantidade'},
                 { data: 'saldo'},
+                { data: 'data_solicitacao', 
+                  render: function(data, type, row) {
+                    return new Date(data).toLocaleDateString('pt-BR', {
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit',
+                    });
+                }
+                },
                 { 
                     data:'acoes',
                     render: function(data,type,row){
@@ -840,7 +878,12 @@
                                 </button>`
                     }
                 }
-                    ]   
+                    ],
+            rowCallback: function(row, data, index) {
+                if (data.saldo <= 0) {
+                    $(row).addClass('linha-sem-saldo');
+                }
+            } 
             }
         
         );
