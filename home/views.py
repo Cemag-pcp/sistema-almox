@@ -143,6 +143,7 @@ def lista_solicitacoes(request):
             "quantidade": req.quantidade,
             "classe_requisicao": req.classe_requisicao.nome,
             "saldo": req.saldo,
+            "data_solicitacao": req.data_solicitacao.isoformat(),
             "acoes": 'acoes'
         }
         for req in requisicoes_paginadas
@@ -177,6 +178,7 @@ def lista_solicitacoes(request):
             "item": f"{trans.item.codigo} - {trans.item.nome}",  # Supondo que 'nome' é o campo que contém o nome do item
             "quantidade": trans.quantidade,
             "saldo": trans.saldo,
+            "data_solicitacao": trans.data_solicitacao.isoformat(),
             "acoes": 'acoes'
         }
         for trans in transferencias_paginadas
