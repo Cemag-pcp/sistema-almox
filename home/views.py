@@ -19,6 +19,8 @@ from datetime import datetime
 from conexao_plan import busca_saldo_recurso_central
 from time import time
 import environ
+from zoneinfo import ZoneInfo
+
 
 env=environ.Env()
 
@@ -202,8 +204,8 @@ def dashboard(request):
 
     # data_requisicao_list = [req.pk,req.data_solicitacao for req in requisicoes]
     # data_transferencia_list = [tra.data_solicitacao for tra in transferencias]
-    data_requisicao_list = [{"id": req.id, "data_solicitacao": req.data_solicitacao.isoformat()} for req in requisicoes]
-    data_transferencia_list = [{"id": tra.id, "data_solicitacao": tra.data_solicitacao.isoformat()} for tra in transferencias]
+    data_requisicao_list = [{"id": req.id, "data_solicitacao": req.data_solicitacao.isoformat() } for req in requisicoes]
+    data_transferencia_list = [{"id": tra.id, "data_solicitacao": tra.data_solicitacao.isoformat() } for tra in transferencias]
     # data_requisicao_list = serialize('json', requisicoes)
     # data_transferencia_list = serialize('json', transferencias)
 
@@ -223,11 +225,13 @@ def atualizar_dados(request):
 
     # Crie uma lista personalizada para requisições
     requisicoes_data = [
+
         {
             "funcionario": f"{req.funcionario.matricula} - {req.funcionario.nome}",
             "item": f"{req.item.codigo} - {req.item.nome}",  # Supondo que 'nome' é o campo que contém o nome do item
             "quantidade": req.quantidade,
             "id": req.id,
+            "data_solicitacao": req.data_solicitacao.astimezone(ZoneInfo("America/Sao_Paulo")).strftime('%d/%m/%Y %H:%M:%S'),
         }
         for req in requisicoes
     ]
@@ -239,6 +243,7 @@ def atualizar_dados(request):
             "item": f"{trans.item.codigo} - {trans.item.nome}",  # Supondo que 'nome' é o campo que contém o nome do item
             "quantidade": trans.quantidade,
             "id": trans.id,
+            "data_solicitacao": trans.data_solicitacao.astimezone(ZoneInfo("America/Sao_Paulo")).strftime('%d/%m/%Y %H:%M:%S'),
         }
         for trans in transferencias
     ]
