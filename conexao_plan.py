@@ -3,11 +3,14 @@ from google.oauth2 import service_account
 import pandas as pd
 import os
 from cachetools import LRUCache
-# import environ
-# import environ
-# from google.oauth2.service_account import Credentials
 
 cache = LRUCache(maxsize=100)
+
+def format_private_key(key: str) -> str:
+    # Render já passa com quebras de linha reais, então só faz replace se necessário
+    if '\\n' in key:
+        return key.replace('\\n', '\n')
+    return key
 
 def busca_saldo_recurso_central(codigos):
     #Recebe codigo do item nos parametros e retorna saldo de recurso ao vivo do almox central e a data de último saldo puxada da planilha
@@ -29,8 +32,7 @@ def busca_saldo_recurso_central(codigos):
     credentials_google = {
         "type": os.environ.get('type'),
         "project_id": os.environ.get('project_id'),
-        "private_key_id":os.environ.get('private_key_id'),
-        "private_key": os.environ.get('private_key'),
+        "private_key": format_private_key(os.environ.get('private_key')),
         "client_email": os.environ.get('client_email'),
         "client_id": os.environ.get('client_id'),
         "auth_uri": os.environ.get('auth_uri'),
@@ -39,8 +41,7 @@ def busca_saldo_recurso_central(codigos):
         "client_x509_cert_url": os.environ.get('client_x509_cert_url'),
         "universe_domain": os.environ.get('universe_domain')
     }
-
-
+    
     credentials = service_account.Credentials.from_service_account_info(credentials_google, scopes=scope)
 
     #ID planilha
