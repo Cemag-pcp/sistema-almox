@@ -38,6 +38,8 @@
                     <div class="card-body">
                         <h5 class="card-title">{{ requisicao.funcionario.matricula }} - {{ requisicao.funcionario.nome }}</h5>
                         <p class="card-text">{{ requisicao.item }}</p>
+
+                        <p class="card-text mt-2">{{ requisicao.data_solicitacao|date:"d/m/Y H:i:s" }}</p>
                         <span class="card-text fw-bold bg-warning" style="font-size: 1.5rem; border-radius: 5px; padding: 5px;" id="contador_{{ requisicao.pk }}"></span>
                     </div>
                     <div class="card-footer bg-light text-secondary" style="border-radius: 0 0 12px 12px;">
@@ -58,6 +60,8 @@
                     <div class="card-body">
                         <h5 class="card-title">{{ transferencia.funcionario.matricula }} - {{ transferencia.funcionario.nome }}</h5>
                         <p class="card-text">{{ transferencia.item }}</p>
+                        
+                        <p class="card-text mt-2">{{ transferencia.data_solicitacao|date:"d/m/Y H:i:s" }}</p>
                         <span class="card-text fw-bold bg-warning" style="font-size: 1.5rem; border-radius: 5px; padding: 5px;" id="contador_{{ transferencia.pk }}"></span>
                     </div>
                     <div class="card-footer bg-light text-secondary" style="border-radius: 0 0 12px 12px;">
@@ -93,6 +97,7 @@
                     if (requisicoes.length > 0 || transferencias.length > 0) {
                         // Atualiza as requisições
                         requisicoes.forEach(item => {
+                            
                             dadosContainer.innerHTML += `
                                 <div class="col-lg-3">
                                     <div class="card text-dark bg-light mb-4 mt-5"
@@ -103,6 +108,7 @@
                                         <div class="card-body">
                                             <h5 class="card-title">${item.funcionario}</h5>
                                             <p class="card-text">${item.item}</p>
+                                            <p class="card-text mt-2">${item.data_solicitacao}</p>
                                             <span class="card-text fw-bold bg-warning" style="font-size: 1.5rem; border-radius: 5px; padding: 5px;" id="contador_${item.id}"></span>
                                         </div>
                                         <div class="card-footer bg-light text-secondary" style="border-radius: 0 0 12px 12px;">
@@ -124,6 +130,8 @@
                                         <div class="card-body">
                                             <h5 class="card-title">${item.funcionario}</h5>
                                             <p class="card-text">${item.item}</p>
+
+                                            <p class="card-text mt-2">${item.data_solicitacao}</p>
                                             <span class="card-text fw-bold bg-warning" style="font-size: 1.5rem; border-radius: 5px; padding: 5px;" id="contador_${item.id}"></span>
                                         </div>
                                         <div class="card-footer bg-light text-secondary" style="border-radius: 0 0 12px 12px;">
