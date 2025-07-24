@@ -2,7 +2,7 @@ from requisicao.settings.base import *
 
 # Configurações específicas de desenvolvimento
 DEBUG = env.bool('DEBUG', default=True)
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost','gerenciador-requisicao-testes.onrender.com']
 
 # Banco de dados para desenvolvimento
 # DATABASES = {
