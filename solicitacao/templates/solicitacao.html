@@ -32,7 +32,15 @@
                 <form id="formRequisicao" method="post" class="container">
                     {% csrf_token %}
                     <input type="hidden" name="form_type" value="requisicao">
-                    
+                    <div class="d-flex justify-content-end mb-4">
+                        <div class="alert alert-info">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-box-open me-3 fs-4"></i>
+                                <p class="mb-0 fw-semibold">Você está solicitando um material para consumo interno</p>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="row mb-3 justify-content-center">
                         <div class="col-md-6">
                             <label for="id_requisicao-funcionario" class="form-label">Matrícula:</label>
@@ -115,7 +123,16 @@
                 <form id="formTransferencia" method="post" class="container">
                     {% csrf_token %}
                     <input type="hidden" name="form_type" value="transferencia">
-                
+                    
+                    <div class="d-flex justify-content-end mb-4">
+                        <div class="alert alert-info">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-tools me-3 fs-4"></i>
+                                <p class="mb-0 fw-semibold">Você está solicitando um material para uso nas máquinas</p>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="row mb-3 justify-content-center">
                         <div class="col-md-6">
                             <label for="id_transferencia-funcionario" class="form-label">Matrícula:</label>
