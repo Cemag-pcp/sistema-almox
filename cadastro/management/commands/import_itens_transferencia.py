@@ -6,17 +6,16 @@ class Command(BaseCommand):
     help = 'Importa itens de transferência do arquivo CSV'
 
     def handle(self, *args, **kwargs):
-        with open('itens_transferencia.csv', newline='', encoding='utf-8') as csvfile:
+        with open('itens transferencia - Página1.csv', newline='', encoding='utf-8') as csvfile:
             reader = csv.DictReader(csvfile)
 
             for row in reader:
                 codigo = row['Código']
                 nome = row['Descrição']
-                unidade = row['Un.']
 
                 item, created = ItensTransferencia.objects.get_or_create(
                     codigo=codigo,
-                    defaults={'nome': nome, 'unidade': unidade}
+                    defaults={'nome': nome}
                 )
 
                 if created:

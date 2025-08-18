@@ -37,7 +37,7 @@ class ItensSolicitacao(models.Model):
 class ItensTransferencia(models.Model):
 
     codigo = models.CharField(max_length=20, unique=True)
-    nome = models.CharField(max_length=120)
+    nome = models.CharField(max_length=160)
     unidade = models.CharField(max_length=10, blank=True, null=True)
 
     def __str__(self):
