@@ -41,6 +41,8 @@ def busca_saldo_recurso_central(codigos):
         "client_x509_cert_url": os.environ.get('client_x509_cert_url'),
         "universe_domain": os.environ.get('universe_domain')
     }
+
+    print(credentials_google)
     
     credentials = service_account.Credentials.from_service_account_info(credentials_google, scopes=scope)
 
