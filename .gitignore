@@ -3,3 +3,4 @@ antigo
 .venv
 db.sqlite3
 credentials.json
+/venv

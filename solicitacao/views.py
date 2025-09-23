@@ -108,7 +108,7 @@ def criar_solicitacoes(request):
         'centro_custo': centro_custo,
     }
 
-    return render(request, 'solicitacao.html', context)
+    return render(request, 'solicitacao_copy.html', context)
 
 def get_cc_by_matricula(request):
     matricula = request.GET.get('matricula')
@@ -148,7 +148,7 @@ def carregar_classes(request):
 @login_required    
 def historico_requisicao(request):
 
-    return render(request, "historico-requisicao.html")
+    return render(request, "historico-requisicao_copy.html")
 
 @csrf_exempt
 def solicitacao_data_requisicao(request):
@@ -232,7 +232,7 @@ def solicitacao_data_requisicao(request):
 @login_required    
 def historico_transferencia (request):
 
-    return render(request, "historico-transferencia.html")
+    return render(request, "historico-transferencia_copy.html")
 
 @csrf_exempt
 def solicitacao_data_transferencia(request):
@@ -489,7 +489,7 @@ def gerir_solicitacoes(request):
 
     }
 
-    return render(request, 'solicitacao-cadastro.html', context)
+    return render(request, 'solicitacao-cadastro_copy.html', context)
 
 @csrf_exempt
 def edit_solicitacao_cadastro_item(request,pk,tipo_cadastro):
@@ -705,7 +705,7 @@ def home_erros(request):
     }
     
 
-    return render(request, 'erros.html',context)
+    return render(request, 'erros_copy.html',context)
 
 def data_erros_transferencia(request):
 

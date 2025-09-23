@@ -216,7 +216,7 @@ def dashboard(request):
         "transferencias_datas": data_transferencia_list
     }
 
-    return render(request, "dashboard/dashboard.html", context)
+    return render(request, "dashboard/dashboard_copy.html", context)
 
 @login_required
 def atualizar_dados(request):
@@ -328,7 +328,7 @@ class CustomLogoutView(LogoutView):
 
 @login_required    
 def page_solicitacoes(request):
-    return render(request, "home/lista_solicitacoes.html")
+    return render(request, "home/lista_solicitacoes_copy.html")
 
 def processarCodigos(requisicoes,transferencias):
 
